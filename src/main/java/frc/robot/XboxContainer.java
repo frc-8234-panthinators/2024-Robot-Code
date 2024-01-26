@@ -22,8 +22,8 @@ public class XboxContainer {
     }
 
     public double rotation() {
-        if (Math.abs(controller.getRightTriggerAxis()) > 0.5) {
-            return controller.getRightTriggerAxis();
+        if (Math.abs(controller.getRightX()) > 0.5) {
+            return controller.getRightX();
         } else {
             return 0d;
         }
