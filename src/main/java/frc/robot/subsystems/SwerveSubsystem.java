@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import swervelib.parser.SwerveParser;
 import swervelib.SwerveDrive;
-import swervelib.math.SwerveMath;
 import edu.wpi.first.math.util.Units;
 
 public class SwerveSubsystem implements Subsystem {
@@ -23,7 +22,7 @@ public class SwerveSubsystem implements Subsystem {
     public void init() {
         File swerveJsonDirectory = new File(Filesystem.getDeployDirectory(),"swerve");
         try {
-            swerveDrive = new SwerveParser(swerveJsonDirectory).createSwerveDrive(Units.feetToMeters(0.01), SwerveMath.calculateDegreesPerSteeringRotation(7, 1), SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75, 1));
+            swerveDrive = new SwerveParser(swerveJsonDirectory).createSwerveDrive(Units.feetToMeters(0.01));
             swerveDrive.zeroGyro();
             System.out.println(swerveDrive.getModules());
             AutoBuilder.configureHolonomic(
