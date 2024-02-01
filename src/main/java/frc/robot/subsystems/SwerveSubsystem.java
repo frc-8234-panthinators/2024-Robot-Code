@@ -22,7 +22,7 @@ public class SwerveSubsystem implements Subsystem {
     public void init() {
         File swerveJsonDirectory = new File(Filesystem.getDeployDirectory(),"swerve");
         try {
-            swerveDrive = new SwerveParser(swerveJsonDirectory).createSwerveDrive(Units.feetToMeters(0.01));
+            swerveDrive = new SwerveParser(swerveJsonDirectory).createSwerveDrive(Units.feetToMeters(1));
             swerveDrive.zeroGyro();
             System.out.println(swerveDrive.getModules());
             AutoBuilder.configureHolonomic(
