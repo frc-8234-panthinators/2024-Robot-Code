@@ -27,6 +27,7 @@ public class Robot extends TimedRobot {
   
   private XboxContainer controls = new XboxContainer();
   private SwerveSubsystem swerve = new SwerveSubsystem();
+  private double turnSpeed = 0.25;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -92,7 +93,16 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    swerve.Drive(new Translation2d(controls.driveY() * -1, controls.driveX() * -1), controls.rotation() * -1);
+    controls.orientedToggle.onTrue(swerve.toggleOrientedMode());
+    if (controls.resetHeading()) {
+      swerve.resetHeading();
+    }
+    if (controls.driveX() > 0.1 || controls.driveY() > 0.1) {
+      turnSpeed = 1;
+    } else {
+      turnSpeed = 0.25;
+    }
+    swerve.Drive(controls.calcControllerCurve(controls.driveX(), controls.driveY()), controls.rotation() * turnSpeed);
     swerve.updateOdometry();
   }
 
