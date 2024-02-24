@@ -12,22 +12,24 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import swervelib.SwerveDrive;
 import edu.wpi.first.math.util.Units;
 
-public class SwerveSubsystem implements Subsystem {
+public class SwerveSubsystem extends SubsystemBase {
     SwerveDrive swerveDrive;
     private boolean fieldRelative = true;
     public void init() {
         File swerveJsonDirectory = new File(Filesystem.getDeployDirectory(),"swerve");
         try {
-            swerveDrive = new SwerveParser(swerveJsonDirectory).createSwerveDrive(Units.feetToMeters(2));
+            swerveDrive = new SwerveParser(swerveJsonDirectory).createSwerveDrive(Units.feetToMeters(0.2));
             swerveDrive.zeroGyro();
             AutoBuilder.configureHolonomic(
                 this::getPose, // Robot pose supplier
@@ -65,7 +67,7 @@ public class SwerveSubsystem implements Subsystem {
     }
 
     public Command toggleOrientedMode() {
-        return this.runOnce(() -> fieldRelative = !fieldRelative);
+        return this.runOnce(() -> {fieldRelative = !fieldRelative; SmartDashboard.putBoolean("relativityMode", fieldRelative);});
     }
 
     public void Drive(Translation2d translation, double rotation) {

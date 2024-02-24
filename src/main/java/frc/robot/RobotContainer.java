@@ -5,7 +5,10 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
+
+import java.lang.reflect.Constructor;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -22,15 +25,16 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  SwerveSubsystem swerve;
+  XboxContainer controls;
+  ArmSubsystem arm;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
+  public RobotContainer(SwerveSubsystem swerveSub, XboxContainer xboxSub, ArmSubsystem armSub) {
     // Configure the trigger bindings
+    swerve = swerveSub;
+    controls = xboxSub;
+    arm = armSub;
     configureBindings();
   }
 
@@ -44,9 +48,10 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+    controls.orientedToggle.onTrue(swerve.toggleOrientedMode());
+    controls.moveToZero.onTrue(arm.moveToZero());
+    controls.zeroEncoders.onTrue(arm.zeroBigPivot());
+    controls.ampMode.onTrue(arm.ampMode());
   }
 
   /**
