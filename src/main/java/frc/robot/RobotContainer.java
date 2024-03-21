@@ -5,7 +5,15 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.ampModeArm;
+import frc.robot.commands.moveArmToZero;
+import frc.robot.commands.moveWristToIntake;
+import frc.robot.commands.moveWristToZero;
+import frc.robot.commands.zeroArm;
+import frc.robot.commands.zeroWrist;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 import java.lang.reflect.Constructor;
@@ -14,6 +22,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -28,13 +37,17 @@ public class RobotContainer {
   SwerveSubsystem swerve;
   XboxContainer controls;
   ArmSubsystem arm;
+  IntakeSubsystem intake;
+  ShooterSubsystem shooter;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer(SwerveSubsystem swerveSub, XboxContainer xboxSub, ArmSubsystem armSub) {
+  public RobotContainer(SwerveSubsystem swerveSub, XboxContainer xboxSub, ArmSubsystem armSub, IntakeSubsystem intakeSub, ShooterSubsystem shooterSub) {
     // Configure the trigger bindings
     swerve = swerveSub;
     controls = xboxSub;
     arm = armSub;
+    intake = intakeSub;
+    shooter = shooterSub;
     configureBindings();
   }
 
@@ -49,9 +62,16 @@ public class RobotContainer {
    */
   private void configureBindings() {
     controls.orientedToggle.onTrue(swerve.toggleOrientedMode());
-    controls.moveToZero.onTrue(arm.moveToZero());
-    controls.zeroEncoders.onTrue(arm.zeroBigPivot());
-    controls.ampMode.onTrue(arm.ampMode());
+    controls.moveToZero.onTrue(new moveWristToZero(arm, intake).andThen(new moveArmToZero(arm)));
+    controls.zeroEncoders.onTrue(new zeroWrist(arm).andThen(new zeroArm(arm)));
+    controls.ampMode.onTrue(new ampModeArm(arm));
+    controls.intakeMode.onTrue(
+      new zeroWrist(arm)
+      .andThen(new zeroArm(arm))
+      .andThen(new moveWristToIntake(arm, intake))
+      .andThen(new WaitUntilCommand(intake.intakeBeamBreak::get))
+      .andThen(new moveWristToZero(arm, intake))
+    );
   }
 
   /**

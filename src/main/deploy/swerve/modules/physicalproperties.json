@@ -1,8 +1,8 @@
 {
   "wheelGripCoefficientOfFriction": 1.19,
   "currentLimit": {
-    "drive": 40,
-    "angle": 20
+    "drive": 30,
+    "angle": 10
   },
   "conversionFactor": {
     "angle": 360,

@@ -12,7 +12,7 @@ public class XboxContainer {
     public Trigger moveToZero = new JoystickButton(otherController, XboxController.Button.kX.value);
     public Trigger zeroEncoders = new JoystickButton(otherController, XboxController.Button.kB.value);
     public Trigger ampMode = new JoystickButton(otherController, XboxController.Button.kA.value);
-
+    public Trigger intakeMode = new JoystickButton(otherController, XboxController.Button.kY.value);
     public double driveY() {
         if (Math.abs(controller.getLeftY()) > 0.25) {
             return controller.getLeftY();
@@ -43,6 +43,20 @@ public class XboxContainer {
         double newX = x * 0.3;
         double newY = y * 0.3;
         return new Translation2d(newX, newY * -1);
+    }
+
+    public boolean revShooters() {
+        return otherController.getRightBumper();
+    }
+    
+    public double revIntake() {
+        if (otherController.getPOV() == 0) {
+            return -1;
+        } else if (otherController.getPOV() == 180) {
+            return 0.1;
+        } else {
+            return 0;
+        }
     }
 
     public boolean resetHeading() {

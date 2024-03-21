@@ -13,7 +13,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.XboxContainer;
+import frc.robot.commands.zeroArm;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /**
@@ -30,6 +33,8 @@ public class Robot extends TimedRobot {
   private XboxContainer controls = new XboxContainer();
   private SwerveSubsystem swerve = new SwerveSubsystem();
   private ArmSubsystem arm = new ArmSubsystem();
+  private ShooterSubsystem shooter = new ShooterSubsystem();
+  private IntakeSubsystem intake = new IntakeSubsystem();
   private double turnSpeed = 0.25;
   
 
@@ -41,7 +46,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer(swerve, controls, arm);
+    m_robotContainer = new RobotContainer(swerve, controls, arm, intake, shooter);
     swerve.init();
     arm.initPID();
   }
@@ -72,7 +77,7 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    arm.zeroBigPivot().schedule();
+    new zeroArm(arm).schedule();
     /*m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -87,7 +92,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    arm.zeroBigPivot().schedule();
+    new zeroArm(arm).schedule();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -109,13 +114,28 @@ public class Robot extends TimedRobot {
       turnSpeed = 0.25;
     }
     if (controls.getManualBigPivotPosition() > 0.1 || controls.getManualBigPivotPosition() < -0.1) {
-      arm.armPos += controls.getManualBigPivotPosition();
+      arm.wristPos += controls.getManualBigPivotPosition() * 0.5;
     }
+    arm.getLimitSwitchStates();
     SmartDashboard.putNumber("Big Pivot Position", arm.getBigPivotPosition());
     SmartDashboard.putNumber("Arm Pos", arm.armPos);
-    arm.setBigPivotPosition(arm.armPos);
+    SmartDashboard.putNumber("Real Wrist Pos", arm.getWristPosition());
+    SmartDashboard.putNumber("Desired Wrist Pos", arm.wristPos);
+    arm.setWristPosition(arm.wristPos);
     swerve.Drive(controls.calcControllerCurve(controls.driveX(), controls.driveY()), controls.rotation() * turnSpeed);
     swerve.updateOdometry();
+
+    if (controls.revShooters()) {
+      shooter.revShooters();
+    } else {
+      shooter.stopShooters();
+    }
+
+    if (intake.isIntaking) {
+      intake.setIntake(-1);
+    } else {
+      intake.setIntake(0);
+    }
   }
 
   @Override
