@@ -13,6 +13,8 @@ public class XboxContainer {
     public Trigger zeroEncoders = new JoystickButton(otherController, XboxController.Button.kB.value);
     public Trigger ampMode = new JoystickButton(otherController, XboxController.Button.kA.value);
     public Trigger intakeMode = new JoystickButton(otherController, XboxController.Button.kY.value);
+    public Trigger outtake = new JoystickButton(otherController, XboxController.Button.kRightBumper.value);
+    public Trigger shoot = new JoystickButton(otherController, XboxController.Button.kLeftBumper.value);
     public double driveY() {
         if (Math.abs(controller.getLeftY()) > 0.25) {
             return controller.getLeftY();
@@ -44,16 +46,12 @@ public class XboxContainer {
         double newY = y * 0.3;
         return new Translation2d(newX, newY * -1);
     }
-
-    public boolean revShooters() {
-        return otherController.getRightBumper();
-    }
     
     public double revIntake() {
         if (otherController.getPOV() == 0) {
             return -1;
         } else if (otherController.getPOV() == 180) {
-            return 0.1;
+            return 1;
         } else {
             return 0;
         }
@@ -64,6 +62,10 @@ public class XboxContainer {
     }
 
     public double getManualBigPivotPosition() {
+        return controller.getRightTriggerAxis() - controller.getLeftTriggerAxis();
+    }
+
+    public double getManualWristPosition() {
         return otherController.getRightTriggerAxis() - otherController.getLeftTriggerAxis();
     }
 }

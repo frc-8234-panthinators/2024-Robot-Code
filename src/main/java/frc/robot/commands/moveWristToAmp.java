@@ -7,30 +7,32 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ArmSubsystem;
 
-public class ampModeArm extends Command {
-  private ArmSubsystem arm;
-  /** Creates a new ampModeArm. */
-  public ampModeArm(ArmSubsystem armSub) {
+public class moveWristToAmp extends Command {
+  ArmSubsystem arm;
+  /** Creates a new moveWristToAmpk. */
+  public moveWristToAmp(ArmSubsystem armSub) {
     arm = armSub;
     addRequirements(arm);
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    arm.bigPivotNormalPID.setOutputRange(-0.2, 0.2);
-    arm.bigPivotInvertedPID.setOutputRange(-0.2, 0.2);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    arm.setBigPivotPosition(-12);
+    arm.setWristPosition(17.25);
   }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(arm.getBigPivotPosition()+12) < 0.5;
+    return Math.abs(arm.getWristPosition()-17.25) < 2;
   }
 }

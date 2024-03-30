@@ -113,23 +113,26 @@ public class Robot extends TimedRobot {
     } else {
       turnSpeed = 0.25;
     }
-    if (controls.getManualBigPivotPosition() > 0.1 || controls.getManualBigPivotPosition() < -0.1) {
-      arm.wristPos += controls.getManualBigPivotPosition() * 0.5;
+    /*if (controls.getManualWristPosition() > 0.1 || controls.getManualWristPosition() < -0.1) {
+      arm.wristPos += controls.getManualWristPosition() * 0.5;
     }
+    if (controls.getManualBigPivotPosition() > 0.1 || controls.getManualBigPivotPosition() < -0.1) {
+      arm.armPos += controls.getManualBigPivotPosition() * 0.5;
+    }*/
+
     arm.getLimitSwitchStates();
     SmartDashboard.putNumber("Big Pivot Position", arm.getBigPivotPosition());
     SmartDashboard.putNumber("Arm Pos", arm.armPos);
     SmartDashboard.putNumber("Real Wrist Pos", arm.getWristPosition());
     SmartDashboard.putNumber("Desired Wrist Pos", arm.wristPos);
     arm.setWristPosition(arm.wristPos);
+    arm.setBigPivotPosition(arm.armPos);
     swerve.Drive(controls.calcControllerCurve(controls.driveX(), controls.driveY()), controls.rotation() * turnSpeed);
     swerve.updateOdometry();
 
-    if (controls.revShooters()) {
-      shooter.revShooters();
-    } else {
-      shooter.stopShooters();
-    }
+    SmartDashboard.putBoolean("Beam Break", intake.readBeamBreak());
+
+    //intake.setIntake(controls.revIntake());
 
     if (intake.isIntaking) {
       intake.setIntake(-1);

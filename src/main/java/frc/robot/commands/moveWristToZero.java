@@ -19,7 +19,6 @@ public class moveWristToZero extends Command {
   }
 
   @Override public void initialize() {
-    if (intake.isIntaking) intake.toggleIntake().schedule();
   }
 
   @Override public void execute() {

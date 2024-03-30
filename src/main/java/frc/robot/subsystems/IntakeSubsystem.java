@@ -20,7 +20,15 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor.set(speed);
   }
 
-  public Command toggleIntake() {
-    return this.runOnce(() -> isIntaking = !isIntaking);
+  public boolean readBeamBreak() {
+    return !intakeBeamBreak.get();
+  }
+
+  public Command enableIntake() {
+    return this.runOnce(() -> isIntaking = true);
+  }
+
+  public Command disableIntake() {
+    return this.runOnce(() -> isIntaking = false);
   }
 }

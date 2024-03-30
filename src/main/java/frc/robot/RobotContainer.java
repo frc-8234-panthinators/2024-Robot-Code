@@ -6,9 +6,14 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ampModeArm;
+import frc.robot.commands.backOutNote;
 import frc.robot.commands.moveArmToZero;
+import frc.robot.commands.moveWristToAmp;
 import frc.robot.commands.moveWristToIntake;
+import frc.robot.commands.moveWristToShoot;
 import frc.robot.commands.moveWristToZero;
+import frc.robot.commands.outtakeNote;
+import frc.robot.commands.shoot;
 import frc.robot.commands.zeroArm;
 import frc.robot.commands.zeroWrist;
 import frc.robot.subsystems.ArmSubsystem;
@@ -22,6 +27,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -62,14 +68,36 @@ public class RobotContainer {
    */
   private void configureBindings() {
     controls.orientedToggle.onTrue(swerve.toggleOrientedMode());
-    controls.moveToZero.onTrue(new moveWristToZero(arm, intake).andThen(new moveArmToZero(arm)));
-    controls.zeroEncoders.onTrue(new zeroWrist(arm).andThen(new zeroArm(arm)));
-    controls.ampMode.onTrue(new ampModeArm(arm));
+    controls.moveToZero.onTrue(intake.disableIntake().andThen(new moveWristToZero(arm, intake)).andThen(new moveArmToZero(arm)));
+    controls.zeroEncoders.onTrue(intake.disableIntake().andThen(new zeroWrist(arm)).andThen(new zeroArm(arm)));
+    controls.ampMode.onTrue(
+      intake.disableIntake()
+      .andThen(new ampModeArm(arm))
+      .andThen(new moveWristToAmp(arm))
+      );
+    controls.outtake.onTrue(
+      new outtakeNote(intake)
+      .andThen(new moveWristToZero(arm, intake))
+      .andThen(new moveArmToZero(arm))
+      );
     controls.intakeMode.onTrue(
       new zeroWrist(arm)
       .andThen(new zeroArm(arm))
       .andThen(new moveWristToIntake(arm, intake))
-      .andThen(new WaitUntilCommand(intake.intakeBeamBreak::get))
+      .andThen(intake.enableIntake())
+      .andThen(new WaitUntilCommand(intake::readBeamBreak))
+      .andThen(intake.disableIntake())
+      .andThen(new moveWristToZero(arm, intake))
+      /*.andThen(new backOutNote(intake))
+      .andThen(new WaitCommand(1))
+      .andThen(new moveWristToShoot(arm, intake))
+      .andThen(new shoot(intake, shooter))
+      .andThen(new moveWristToZero(arm, intake))*/
+    );
+    controls.shoot.onTrue(
+      new backOutNote(intake)
+      .andThen(new moveWristToShoot(arm, intake, shooter))
+      .andThen(new shoot(intake, shooter))
       .andThen(new moveWristToZero(arm, intake))
     );
   }

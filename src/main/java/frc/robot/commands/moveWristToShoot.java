@@ -7,15 +7,18 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
-public class moveWristToIntake extends Command {
+public class moveWristToShoot extends Command {
   ArmSubsystem arm;
   IntakeSubsystem intake;
+  ShooterSubsystem shooter;
   /** Creates a new moveWristToIntake. */
-  public moveWristToIntake(ArmSubsystem armSub, IntakeSubsystem intakeSub) {
+  public moveWristToShoot(ArmSubsystem armSub, IntakeSubsystem intakeSub, ShooterSubsystem shooterSub) {
     arm = armSub;
     intake = intakeSub;
-    addRequirements(arm, intake);
+    shooter = shooterSub;
+    addRequirements(arm, intake, shooter);
   }
 
   // Called when the command is initially scheduled.
@@ -24,10 +27,11 @@ public class moveWristToIntake extends Command {
   }
 
   @Override public void execute() {
-    arm.setWristPosition(14);
+    arm.setWristPosition(11.75);
+    shooter.revShooters();
   }
 
   @Override public boolean isFinished() {
-    return Math.abs(arm.getWristPosition()-14) < 2;
+    return Math.abs(arm.getWristPosition()-11.75) < 0.1;
   }
 }

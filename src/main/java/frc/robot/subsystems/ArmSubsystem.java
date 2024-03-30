@@ -13,6 +13,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -38,9 +39,11 @@ public class ArmSubsystem extends SubsystemBase {
   public boolean finishedZeroingBigPivot = false;
   
   public void initPID() {
-    slot0Configs.kP = 0.2;
+    slot0Configs.kP = 0.4;
     slot0Configs.kI = 0.0;
     slot0Configs.kD = 0.0;
+
+    wrist.setNeutralMode(NeutralModeValue.Brake);
 
     wrist.getConfigurator().apply(slot0Configs);
 
