@@ -23,4 +23,9 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterLeft.set(0);
     shooterRight.set(0);
   }
+
+  public void customRev(double speed) {
+    shooterLeft.set(speed);
+    shooterRight.set(speed * -1);
+  }
 }

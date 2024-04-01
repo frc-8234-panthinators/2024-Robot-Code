@@ -6,13 +6,16 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 public class outtakeNote extends Command {
   IntakeSubsystem intake;
+  ShooterSubsystem shooter;
   double startTime = 0;
   /** Creates a new outtakeNote. */
-  public outtakeNote(IntakeSubsystem intakeSub) {
+  public outtakeNote(IntakeSubsystem intakeSub, ShooterSubsystem shooterSub) {
     intake = intakeSub;
+    shooter = shooterSub;
     addRequirements(intake);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -27,8 +30,10 @@ public class outtakeNote extends Command {
   @Override
   public void execute() {
     intake.setIntake(0.25);
+    shooter.customRev(-0.3);
     if ((System.currentTimeMillis() - startTime) > 1000) {
       intake.setIntake(0);
+      shooter.stopShooters();
     }
   }
 

@@ -69,14 +69,13 @@ public class RobotContainer {
   private void configureBindings() {
     controls.orientedToggle.onTrue(swerve.toggleOrientedMode());
     controls.moveToZero.onTrue(intake.disableIntake().andThen(new moveWristToZero(arm, intake)).andThen(new moveArmToZero(arm)));
-    controls.zeroEncoders.onTrue(intake.disableIntake().andThen(new zeroWrist(arm)).andThen(new zeroArm(arm)));
     controls.ampMode.onTrue(
       intake.disableIntake()
       .andThen(new ampModeArm(arm))
       .andThen(new moveWristToAmp(arm))
       );
     controls.outtake.onTrue(
-      new outtakeNote(intake)
+      new outtakeNote(intake, shooter)
       .andThen(new moveWristToZero(arm, intake))
       .andThen(new moveArmToZero(arm))
       );
@@ -95,7 +94,7 @@ public class RobotContainer {
       .andThen(new moveWristToZero(arm, intake))*/
     );
     controls.shoot.onTrue(
-      new backOutNote(intake)
+      new backOutNote(intake, shooter)
       .andThen(new moveWristToShoot(arm, intake, shooter))
       .andThen(new shoot(intake, shooter))
       .andThen(new moveWristToZero(arm, intake))
