@@ -10,12 +10,10 @@ import frc.robot.subsystems.IntakeSubsystem;
 
 public class moveWristToZero extends Command {
   private ArmSubsystem arm;
-  private IntakeSubsystem intake;
   /** Creates a new moveWristToZero. */
-  public moveWristToZero(ArmSubsystem armSub, IntakeSubsystem intakeSub) {
+  public moveWristToZero(ArmSubsystem armSub) {
     arm = armSub;
-    intake = intakeSub;
-    addRequirements(arm, intake);
+    addRequirements(arm);
   }
 
   @Override public void initialize() {

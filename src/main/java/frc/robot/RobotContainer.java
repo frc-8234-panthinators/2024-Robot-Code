@@ -68,7 +68,8 @@ public class RobotContainer {
    */
   private void configureBindings() {
     controls.orientedToggle.onTrue(swerve.toggleOrientedMode());
-    controls.moveToZero.onTrue(intake.disableIntake().andThen(new moveWristToZero(arm, intake)).andThen(new moveArmToZero(arm)));
+    controls.moveToZero.onTrue(intake.disableIntake().andThen(new moveWristToZero(arm)).andThen(new moveArmToZero(arm)));
+    controls.zeroEncoders.onTrue(intake.disableIntake().andThen(new zeroWrist(arm)).andThen(new zeroArm(arm)));
     controls.ampMode.onTrue(
       intake.disableIntake()
       .andThen(new ampModeArm(arm))
@@ -76,17 +77,17 @@ public class RobotContainer {
       );
     controls.outtake.onTrue(
       new outtakeNote(intake, shooter)
-      .andThen(new moveWristToZero(arm, intake))
+      .andThen(new moveWristToZero(arm))
       .andThen(new moveArmToZero(arm))
       );
     controls.intakeMode.onTrue(
-      new zeroWrist(arm)
-      .andThen(new zeroArm(arm))
+      new moveWristToZero(arm)
+      .andThen(new moveArmToZero(arm))
       .andThen(new moveWristToIntake(arm, intake))
       .andThen(intake.enableIntake())
       .andThen(new WaitUntilCommand(intake::readBeamBreak))
       .andThen(intake.disableIntake())
-      .andThen(new moveWristToZero(arm, intake))
+      .andThen(new moveWristToZero(arm))
       /*.andThen(new backOutNote(intake))
       .andThen(new WaitCommand(1))
       .andThen(new moveWristToShoot(arm, intake))
@@ -97,7 +98,7 @@ public class RobotContainer {
       new backOutNote(intake, shooter)
       .andThen(new moveWristToShoot(arm, intake, shooter))
       .andThen(new shoot(intake, shooter))
-      .andThen(new moveWristToZero(arm, intake))
+      .andThen(new moveWristToZero(arm))
     );
   }
 
