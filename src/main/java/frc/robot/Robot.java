@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.XboxContainer;
 import frc.robot.commands.zeroArm;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -35,6 +36,7 @@ public class Robot extends TimedRobot {
   private ArmSubsystem arm = new ArmSubsystem();
   private ShooterSubsystem shooter = new ShooterSubsystem();
   private IntakeSubsystem intake = new IntakeSubsystem();
+  private ClimberSubsystem climber = new ClimberSubsystem();
   private double turnSpeed = 0.25;
   
 
@@ -132,7 +134,11 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putBoolean("Beam Break", intake.readBeamBreak());
 
-    //intake.setIntake(controls.revIntake());
+    if (controls.getManualBigPivotPosition() > 0.1 || controls.getManualBigPivotPosition() < -0.1) {
+      climber.moveClimber(controls.getManualBigPivotPosition());
+    } else {
+      climber.moveClimber(0);
+    }
 
     if (intake.isIntaking) {
       intake.setIntake(-1);
